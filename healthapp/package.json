@@ -7,12 +7,12 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc",
+    "tsc": "tsc --noEmit",
     "calculateBmi": "tsc && node bmiCalculator.ts",
     "calculateExercises": "tsc && node exerciseCalculator.ts"
   },
   "devDependencies": {
+    "@types/node": "^26.6.3",
     "typescript": "^5.9.3"
   }
 }

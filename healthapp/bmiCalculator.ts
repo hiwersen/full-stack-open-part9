@@ -1,5 +1,28 @@
-const calculateBmi = (height: number, weight: number): string => {
-  const BMI: number = weight / (height / 100) ** 2;
+type BmiResult = "Underweight" | "Normal range" | "Overweight" | "Obese";
+
+interface CalculateBmiArguments {
+  height: number;
+  weight: number;
+}
+
+const parseArguments = (args: string[]): CalculateBmiArguments => {
+  if (args.length < 4) throw new Error("Provide height in cm and weight in kg");
+  if (args.length > 4) throw new Error("Too many arguments");
+
+  const height = Number(process.argv[2]);
+  const weight = Number(process.argv[3]);
+
+  if (isNaN(height) || isNaN(weight))
+    throw new Error("height and weight must be numbers");
+
+  return { height, weight };
+};
+
+const calculateBmi = (height: number, weight: number): BmiResult => {
+  if (height <= 0 || weight <= 0)
+    throw new Error("height and weight must be greater than zero");
+
+  const BMI = weight / (height / 100) ** 2;
 
   if (BMI < 18.5) return "Underweight";
   if (BMI < 25) return "Normal range";
@@ -7,4 +30,15 @@ const calculateBmi = (height: number, weight: number): string => {
   return "Obese";
 };
 
-console.log(calculateBmi(180, 74));
+try {
+  const { height, weight } = parseArguments(process.argv);
+  console.log(calculateBmi(height, weight));
+} catch (error: unknown) {
+  let errorMessage = "Something went wrong";
+
+  if (error instanceof Error) errorMessage += `: ${error.message}`;
+
+  console.log(errorMessage);
+}
+
+export {};
