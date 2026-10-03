@@ -30,15 +30,17 @@ const calculateBmi = (height: number, weight: number): BmiResult => {
   return "Obese";
 };
 
-try {
-  const { height, weight } = parseArguments(process.argv);
-  console.log(calculateBmi(height, weight));
-} catch (error: unknown) {
-  let errorMessage = "Something went wrong";
+if (process.argv[1] === import.meta.filename) {
+  try {
+    const { height, weight } = parseArguments(process.argv);
+    console.log(calculateBmi(height, weight));
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong";
 
-  if (error instanceof Error) errorMessage += `: ${error.message}`;
+    if (error instanceof Error) errorMessage += `: ${error.message}`;
 
-  console.log(errorMessage);
+    console.log(errorMessage);
+  }
 }
 
-export {};
+export default calculateBmi;
