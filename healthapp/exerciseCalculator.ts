@@ -65,16 +65,17 @@ const calculateExercises = (
   };
 };
 
-try {
-  const { target, dailyExercises } = parseArguments(process.argv);
+if (process.argv[1] === import.meta.filename) {
+  try {
+    const { target, dailyExercises } = parseArguments(process.argv);
+    console.log(calculateExercises(dailyExercises, target));
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong";
 
-  console.log(calculateExercises(dailyExercises, target));
-} catch (error: unknown) {
-  let errorMessage = "Something went wrong";
+    if (error instanceof Error) errorMessage += `: ${error.message}`;
 
-  if (error instanceof Error) errorMessage += `: ${error.message}`;
-
-  console.log(errorMessage);
+    console.log(errorMessage);
+  }
 }
 
-export {};
+export default calculateExercises;
