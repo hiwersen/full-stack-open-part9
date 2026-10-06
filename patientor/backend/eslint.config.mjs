@@ -26,6 +26,7 @@ export default defineConfig({
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/restrict-plus-operands": "off",
+    "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
   },
 });
