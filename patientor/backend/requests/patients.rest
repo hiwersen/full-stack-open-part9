@@ -8,6 +8,6 @@ Content-Type: application/json
     "name": "name",
     "dateOfBirth": "2026-01-01",
     "ssn": "999999-999X",
-    "gender": "male",
+    "gender": "mal",
     "occupation": "my occupation"
 }
