@@ -8,8 +8,10 @@ patientsRouter.get("/", (_req, res: Response<PatientNoSsn[]>) => {
   res.json(patientsService.getAllNoSsn());
 });
 
-patientsRouter.post("/", (_req, res) => {
-  res.status(201).json({ message: patientsService.add() });
+patientsRouter.post("/", (req, res: Response<PatientNoSsn>) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  const addedPatient = patientsService.add(req.body);
+  res.status(201).json(addedPatient);
 });
 
 export default patientsRouter;
