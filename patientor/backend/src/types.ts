@@ -12,6 +12,14 @@ export interface Patient {
   occupation: string;
 }
 
+export const Gender = {
+  Male: "male",
+  Female: "female",
+  Other: "other",
+} as const;
+
+export type Gender = (typeof Gender)[keyof typeof Gender];
+
 export type PatientNoSsn = Omit<Patient, "ssn">;
 
 export type NewPatient = Omit<Patient, "id">;
