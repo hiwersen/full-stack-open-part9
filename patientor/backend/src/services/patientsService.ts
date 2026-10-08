@@ -12,16 +12,14 @@ const getAllNoSsn = (): PatientNoSsn[] => {
   }));
 };
 
-const add = (newPatient: NewPatient): PatientNoSsn => {
+const add = (newPatient: NewPatient): Patient => {
   const patient: Patient = {
     id: uuid(),
     ...newPatient,
   };
 
   patientsData.push(patient);
-
-  const { ssn, ...addedPatient } = patient;
-  return addedPatient;
+  return patient;
 };
 
 export default { getAllNoSsn, add };

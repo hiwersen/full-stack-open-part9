@@ -5,6 +5,7 @@ import express, {
 } from "express";
 import patientsService from "../services/patientsService.ts";
 import {
+  type Patient,
   type NewPatient,
   type PatientNoSsn,
   NewPatientSchema,
@@ -42,9 +43,9 @@ patientsRouter.get("/", (_req, res: Response<PatientNoSsn[]>) => {
 patientsRouter.post(
   "/",
   NewPatientParser,
-  (req: Request<unknown, unknown, NewPatient>, res: Response<PatientNoSsn>) => {
+  (req: Request<unknown, unknown, NewPatient>, res: Response<Patient>) => {
     const addedPatient = patientsService.add(req.body);
-    res.status(201).json(addedPatient);
+    res.json(addedPatient);
   },
 );
 
