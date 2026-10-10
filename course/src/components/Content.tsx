@@ -1,17 +1,13 @@
 import { type ContentProps } from "../types";
+import Part from "./Part";
+
 const Content = ({ courseParts }: ContentProps) => {
   return (
-    <>
-      <p>
-        {courseParts[0].name} {courseParts[0].exerciseCount}
-      </p>
-      <p>
-        {courseParts[1].name} {courseParts[1].exerciseCount}
-      </p>
-      <p>
-        {courseParts[2].name} {courseParts[2].exerciseCount}
-      </p>
-    </>
+    <div style={{ display: "grid", gap: "1em" }}>
+      {courseParts.map((part) => (
+        <Part key={part.name} part={part} />
+      ))}
+    </div>
   );
 };
 
