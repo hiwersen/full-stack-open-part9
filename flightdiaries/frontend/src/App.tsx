@@ -1,4 +1,5 @@
 import Header from "./components/Header";
+import NewDiaryEntryForm from "./components/NewDiaryEntryForm";
 import DiaryEntries from "./components/DiaryEntries";
 import Footer from "./components/Footer";
 import { useEffect, useState } from "react";
@@ -22,6 +23,10 @@ const App = () => {
   return (
     <>
       <Header />
+      <NewDiaryEntryForm
+        diaryEntries={diaryEntries}
+        setDiaryEntries={setDiaryEntries}
+      />
       <DiaryEntries diaryEntries={diaryEntries} />
       <Footer />
     </>
