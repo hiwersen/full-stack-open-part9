@@ -1,15 +1,17 @@
-import { useState } from "react";
-import type { NewDiaryEntry, NewDiaryEntryFormProps } from "../types";
+import { useState, type CSSProperties } from "react";
+import {
+  type NewDiaryEntry,
+  type NewDiaryEntryFormProps,
+  Weather,
+  Visibility,
+} from "../types";
 import diaryService from "../diaryService";
 import axios from "axios";
 
-const NewDiaryEntryForm = ({
-  diaryEntries,
-  setDiaryEntries,
-}: NewDiaryEntryFormProps) => {
+const NewDiaryEntryForm = ({ setDiaryEntries }: NewDiaryEntryFormProps) => {
   const [date, setDate] = useState("");
-  const [weather, setWeather] = useState("");
-  const [visibility, setVisibility] = useState("");
+  const [weather, setWeather] = useState<Weather>(Weather.Sunny);
+  const [visibility, setVisibility] = useState<Visibility>(Visibility.Great);
   const [comment, setComment] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -26,10 +28,10 @@ const NewDiaryEntryForm = ({
     diaryService
       .create(newDiaryEntry)
       .then((diaryEntry) => {
-        setDiaryEntries(diaryEntries.concat(diaryEntry));
+        setDiaryEntries((prev) => prev.concat(diaryEntry));
         setDate("");
-        setVisibility("");
-        setWeather("");
+        setWeather(Weather.Sunny);
+        setVisibility(Visibility.Great);
         setComment("");
         setErrorMessage("");
       })
@@ -38,10 +40,10 @@ const NewDiaryEntryForm = ({
           const data: unknown = error.response?.data;
 
           if (data !== null && typeof data === "object" && "error" in data) {
-            const error: unknown = data.error;
+            const errors: unknown = data.error;
 
-            if (Array.isArray(error)) {
-              const firstError: unknown = error[0];
+            if (Array.isArray(errors)) {
+              const firstError: unknown = errors[0];
 
               if (firstError !== null && typeof firstError === "object") {
                 let firstErrorMessage = "Error";
@@ -56,7 +58,6 @@ const NewDiaryEntryForm = ({
                 if (
                   "path" in firstError &&
                   Array.isArray(firstError.path) &&
-                  firstError.path[0] !== null &&
                   typeof firstError.path[0] === "string"
                 ) {
                   firstErrorMessage += ` at ${firstError.path[0]} field`;
@@ -72,43 +73,101 @@ const NewDiaryEntryForm = ({
       });
   };
 
+  const style: CSSProperties = {
+    width: "100%",
+    boxSizing: "border-box",
+  };
+
   return (
     <>
+      <h2>Add New Diary Entry</h2>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="date">date</label>
-          <input
-            name="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="weather">weather</label>
-          <input
-            name="weather"
-            value={weather}
-            onChange={(e) => setWeather(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="visibility">visibility</label>
-          <input
-            name="visibility"
-            value={visibility}
-            onChange={(e) => setVisibility(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="comment">comment</label>
-          <input
-            name="comment"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
-        </div>
-        <button type="submit">add</button>
+        <table>
+          <thead></thead>
+          <tbody>
+            <tr>
+              <td>
+                <label htmlFor="date">date</label>
+              </td>
+              <td>
+                <input
+                  style={style}
+                  id="date"
+                  type="date"
+                  name="date"
+                  value={date}
+                  max={new Date().toLocaleDateString("sv-SE")}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>weather</td>
+              <td>
+                {Object.values(Weather).map((value) => (
+                  <label key={value} style={{ marginRight: "1em" }}>
+                    <input
+                      type="radio"
+                      name="weather"
+                      value={value}
+                      checked={value === weather}
+                      onChange={() => setWeather(value)}
+                    />
+                    {value}
+                  </label>
+                ))}
+              </td>
+            </tr>
+            <tr>
+              <td>visibility</td>
+              <td>
+                {Object.values(Visibility).map((value) => (
+                  <label key={value} style={{ marginRight: "1em" }}>
+                    <input
+                      type="radio"
+                      name="visibility"
+                      value={value}
+                      checked={value === visibility}
+                      onChange={() => setVisibility(value)}
+                    />
+                    {value}
+                  </label>
+                ))}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label htmlFor="comment">comment</label>
+              </td>
+              <td>
+                <input
+                  style={style}
+                  id="comment"
+                  name="comment"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td></td>
+              <td>
+                <button
+                  style={{
+                    ...style,
+                    cursor: "pointer",
+                  }}
+                  type="submit"
+                >
+                  add
+                </button>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
       </form>
     </>
   );

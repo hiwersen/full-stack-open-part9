@@ -19,8 +19,8 @@ export type Visibility = (typeof Visibility)[keyof typeof Visibility];
 
 export interface DiaryEntry {
   id: number;
-  weather: string;
-  visibility: string;
+  weather: Weather;
+  visibility: Visibility;
   date: string;
   comment?: string | undefined;
 }
@@ -32,6 +32,5 @@ export interface DiaryEntriesProps {
 }
 
 export interface NewDiaryEntryFormProps {
-  diaryEntries: DiaryEntry[];
   setDiaryEntries: React.Dispatch<React.SetStateAction<DiaryEntry[]>>;
 }

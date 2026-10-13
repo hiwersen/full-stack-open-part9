@@ -3,7 +3,7 @@ import NewDiaryEntryForm from "./components/NewDiaryEntryForm";
 import DiaryEntries from "./components/DiaryEntries";
 import Footer from "./components/Footer";
 import { useEffect, useState } from "react";
-import { type DiaryEntry } from "./types";
+import type { DiaryEntry } from "./types";
 import diaryService from "./diaryService";
 
 const App = () => {
@@ -15,8 +15,7 @@ const App = () => {
       .then((diaryEntries) => {
         setDiaryEntries(diaryEntries);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((error: unknown) => {
         console.error(error);
       });
   }, []);
@@ -24,10 +23,7 @@ const App = () => {
   return (
     <>
       <Header />
-      <NewDiaryEntryForm
-        diaryEntries={diaryEntries}
-        setDiaryEntries={setDiaryEntries}
-      />
+      <NewDiaryEntryForm setDiaryEntries={setDiaryEntries} />
       <DiaryEntries diaryEntries={diaryEntries} />
       <Footer />
     </>
