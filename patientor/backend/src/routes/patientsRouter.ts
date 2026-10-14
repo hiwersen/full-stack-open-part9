@@ -40,6 +40,10 @@ patientsRouter.get("/", (_req, res: Response<PatientNoSsn[]>) => {
   res.json(patientsService.getAllNoSsn());
 });
 
+patientsRouter.get("/:id", (req, res: Response<Patient>) => {
+  res.json(patientsService.get(req.params.id));
+});
+
 patientsRouter.post(
   "/",
   NewPatientParser,

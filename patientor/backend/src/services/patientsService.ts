@@ -12,14 +12,19 @@ const getAllNoSsn = (): PatientNoSsn[] => {
   }));
 };
 
+const get = (id: string): Patient | undefined => {
+  return patientsData.find((p) => p.id === id);
+};
+
 const add = (newPatient: NewPatient): Patient => {
   const patient: Patient = {
     id: uuid(),
     ...newPatient,
+    entries: [],
   };
 
   patientsData.push(patient);
   return patient;
 };
 
-export default { getAllNoSsn, add };
+export default { getAllNoSsn, get, add };
