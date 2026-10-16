@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import patientServices from "../services/patients";
-import type { Patient } from "../types";
+import type { Diagnosis, Patient } from "../types";
 import GenderIcon from "./GenderIcon";
 import {
   Typography,
@@ -11,7 +11,7 @@ import {
   TableCell,
 } from "@mui/material";
 
-const PatientPage = () => {
+const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const { id } = useParams();
 
@@ -66,9 +66,14 @@ const PatientPage = () => {
                 </p>
                 {entry.diagnosisCodes && (
                   <ul>
-                    {entry.diagnosisCodes?.map((code) => (
-                      <li key={code}>{code}</li>
-                    ))}
+                    {entry.diagnosisCodes?.map((code) => {
+                      const diagnosis = diagnoses.find((d) => d.code === code);
+                      return (
+                        <li key={code}>
+                          {code} {diagnosis?.name}
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
               </div>
