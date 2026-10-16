@@ -1,15 +1,17 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import patientServices from "../services/patients";
-import type { Diagnosis, Patient } from "../types";
-import GenderIcon from "./GenderIcon";
+import patientServices from "../../services/patients";
+import type { Diagnosis, Patient } from "../../types";
+import GenderIcon from "../GenderIcon";
 import {
   Typography,
   Table,
   TableBody,
   TableRow,
   TableCell,
+  Divider,
 } from "@mui/material";
+import EntryDetails from "./EntryDetails";
 
 const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -60,7 +62,7 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
               entries
             </Typography>
             {patient.entries?.map((entry) => (
-              <div key={entry.id}>
+              <div key={entry.id} style={{ marginBottom: "2em" }}>
                 <p>
                   {entry.date} {entry.description}
                 </p>
@@ -76,6 +78,9 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
                     })}
                   </ul>
                 )}
+                <EntryDetails entry={entry} />
+                <p>Diagnose by {entry.specialist}</p>
+                <Divider />
               </div>
             ))}
           </>
