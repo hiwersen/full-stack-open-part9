@@ -31,7 +31,7 @@ const PatientPage = () => {
   return (
     patient && (
       <>
-        <Typography component="h2" variant="h4">
+        <Typography component="h2" variant="h4" sx={{ p: "1em 0" }}>
           {patient.name} <GenderIcon gender={patient.gender} />
         </Typography>
         <Table sx={{ width: "auto" }}>
@@ -54,6 +54,27 @@ const PatientPage = () => {
             )}
           </TableBody>
         </Table>
+        {patient.entries && (
+          <>
+            <Typography component="h3" variant="h6" sx={{ p: "1em 0" }}>
+              entries
+            </Typography>
+            {patient.entries?.map((entry) => (
+              <div key={entry.id}>
+                <p>
+                  {entry.date} {entry.description}
+                </p>
+                {entry.diagnosisCodes && (
+                  <ul>
+                    {entry.diagnosisCodes?.map((code) => (
+                      <li key={code}>{code}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </>
+        )}
       </>
     )
   );
