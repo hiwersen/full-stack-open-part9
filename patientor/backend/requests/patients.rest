@@ -1,7 +1,7 @@
 GET http://localhost:3001/api/patients
 
 ###
-GET http://localhost:3001/api/patients/eed49940-c946-11f1-8a8e-277c0e4afc80
+GET http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667
 
 ###
 POST http://localhost:3001/api/patients
@@ -14,3 +14,23 @@ Content-Type: application/json
     "gender": "male",
     "occupation": "my occupation"
 }
+
+###
+POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+    "date": "2026-10-17",
+    "type": "OccupationalHealthcare",
+    "specialist": "MD House",
+    "employerName": "HyPD",
+    "diagnosisCodes": ["Z57.1", "Z74.3", "M51.2", "whatever"],
+    "description":
+          "11:02",
+        "sickLeave": {
+          "startDate": "2019-08-05",
+          "endDate": "2019-08-28"
+        },
+    "id": "attacker generated id"
+}
+
