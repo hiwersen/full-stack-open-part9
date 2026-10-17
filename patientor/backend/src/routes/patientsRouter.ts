@@ -70,7 +70,7 @@ patientsRouter.post(
   parseNewPatient,
   (req: Request<unknown, unknown, NewPatient>, res: Response<Patient>) => {
     const addedPatient = patientsService.add(req.body);
-    res.status(201).json(addedPatient);
+    res.json(addedPatient);
   },
 );
 
@@ -88,7 +88,7 @@ patientsRouter.post(
       return;
     }
 
-    res.status(201).json(addedEntry);
+    res.json(addedEntry);
   },
 );
 
