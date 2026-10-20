@@ -4,24 +4,24 @@ export interface Diagnosis {
   latin?: string;
 }
 
-interface BaseEntry {
+export interface BaseEntry {
   date: string;
   specialist: string;
   description: string;
   diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
-interface Discharge {
+export interface Discharge {
   date: string;
   criteria: string;
 }
 
-interface SickLeave {
+export interface SickLeave {
   startDate: string;
   endDate: string;
 }
 
-const HealthCheckRating = {
+export const HealthCheckRating = {
   Healthy: 0,
   LowRisk: 1,
   HighRisk: 2,
