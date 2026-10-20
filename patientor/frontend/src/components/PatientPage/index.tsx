@@ -68,6 +68,7 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
                 },
             );
           }}
+          diagnoses={diagnoses}
         />
         {patient.entries && (
           <>

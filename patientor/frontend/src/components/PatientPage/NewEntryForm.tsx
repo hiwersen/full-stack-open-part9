@@ -10,22 +10,29 @@ import {
   InputLabel,
 } from "@mui/material";
 import patientService from "../../services/patients";
-import { NewEntry, Entry, HealthCheckRating, BaseEntry } from "../../types";
+import {
+  NewEntry,
+  Entry,
+  HealthCheckRating,
+  BaseEntry,
+  Diagnosis,
+} from "../../types";
 import React, { useState } from "react";
 import axios from "axios";
 
 interface Props {
   patientId: string;
   handleCreatedEntry: (entry: Entry) => void;
+  diagnoses: Diagnosis[];
 }
 
-const NewEntryForm = ({ patientId, handleCreatedEntry }: Props) => {
+const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
   const [type, setType] = useState<Entry["type"]>("HealthCheck");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
   const [description, setDescription] = useState("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState("");
-  const [healthCheckRating, setHealthCheckRating] = useState("");
+  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+  const [healthCheckRating, setHealthCheckRating] = useState(0);
   const [dischargeDate, setDischargeDate] = useState("");
   const [dischargeCriteria, setDischargeCriteria] = useState("");
   const [employerName, setEmployerName] = useState("");
@@ -38,8 +45,8 @@ const NewEntryForm = ({ patientId, handleCreatedEntry }: Props) => {
     setDate("");
     setSpecialist("");
     setDescription("");
-    setDiagnosisCodes("");
-    setHealthCheckRating("");
+    setDiagnosisCodes([]);
+    setHealthCheckRating(0);
     setDischargeDate("");
     setDischargeCriteria("");
     setEmployerName("");
@@ -56,7 +63,7 @@ const NewEntryForm = ({ patientId, handleCreatedEntry }: Props) => {
         date,
         specialist,
         description,
-        diagnosisCodes: diagnosisCodes.split(", "),
+        diagnosisCodes,
       };
 
       switch (type) {
@@ -153,16 +160,24 @@ const NewEntryForm = ({ patientId, handleCreatedEntry }: Props) => {
 
         <TextField
           sx={{ marginTop: 1 }}
-          label="date"
+          type="date"
+          label="Date"
           required
           value={date}
-          placeholder="YYYY-MM-DD"
           onChange={({ target }) => setDate(target.value)}
           fullWidth
+          slotProps={{
+            htmlInput: {
+              max: new Date().toLocaleDateString("sv-SE"),
+              onClick: (e: React.MouseEvent<HTMLInputElement>) =>
+                e.currentTarget.showPicker(),
+            },
+            inputLabel: { shrink: true },
+          }}
         />
         <TextField
           sx={{ marginTop: 1 }}
-          label="specialist"
+          label="Specialist"
           required
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
@@ -170,31 +185,53 @@ const NewEntryForm = ({ patientId, handleCreatedEntry }: Props) => {
         />
         <TextField
           sx={{ marginTop: 1 }}
-          label="description"
+          label="Description"
           required
           value={description}
           onChange={({ target }) => setDescription(target.value)}
           fullWidth
         />
-        <TextField
-          sx={{ marginTop: 1 }}
-          label="Diagnosis Codes"
-          value={diagnosisCodes}
-          placeholder="comma-separated"
-          onChange={({ target }) => setDiagnosisCodes(target.value)}
-          fullWidth
-        />
+        <FormControl fullWidth sx={{ marginTop: 1 }}>
+          <InputLabel id="diagnosis-codes-label">Diagnosis Codes</InputLabel>
+          <Select
+            labelId="diagnosis-codes-label"
+            label="Diagnosis Codes"
+            value={diagnosisCodes}
+            renderValue={(selected) => selected.join(" — ")}
+            multiple
+            onChange={({ target: { value } }) => {
+              setDiagnosisCodes(
+                typeof value === "string" ? value.split(",") : value,
+              );
+            }}
+            fullWidth
+          >
+            {diagnoses.map(({ code, name }) => (
+              <MenuItem key={code} value={code}>
+                {code} — {name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         {type === "HealthCheck" && (
-          <TextField
-            sx={{ marginTop: 1 }}
-            label="Health Check Rating"
-            required
-            value={healthCheckRating}
-            placeholder="(0-3)"
-            onChange={({ target }) => setHealthCheckRating(target.value)}
-            fullWidth
-          />
+          <FormControl fullWidth sx={{ marginTop: 1 }}>
+            <InputLabel id="rating-label">Health Check Rating</InputLabel>
+            <Select
+              labelId="rating-label"
+              label="Health Check Rating"
+              required
+              value={healthCheckRating}
+              onChange={({ target }) => setHealthCheckRating(target.value)}
+              fullWidth
+            >
+              {Object.entries(HealthCheckRating).map(([key, value]) => (
+                <MenuItem key={key} value={value}>
+                  {value} — {key}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         )}
 
         {type === "Hospital" && (
@@ -202,10 +239,18 @@ const NewEntryForm = ({ patientId, handleCreatedEntry }: Props) => {
             <TextField
               sx={{ marginTop: 1 }}
               label="Discharge Date"
+              type="date"
               required
               value={dischargeDate}
-              placeholder="YYYY-MM-DD"
               onChange={({ target }) => setDischargeDate(target.value)}
+              slotProps={{
+                htmlInput: {
+                  max: new Date().toLocaleDateString("sv-SE"),
+                  onClick: (e: React.MouseEvent<HTMLInputElement>) =>
+                    e.currentTarget.showPicker(),
+                },
+                inputLabel: { shrink: true },
+              }}
               fullWidth
             />
             <TextField
@@ -232,16 +277,34 @@ const NewEntryForm = ({ patientId, handleCreatedEntry }: Props) => {
             <TextField
               sx={{ marginTop: 1 }}
               label="Sick Leave Start Date"
+              type="date"
               value={sickLeaveStartDate}
               onChange={({ target }) => setSickLeaveStartDate(target.value)}
+              slotProps={{
+                htmlInput: {
+                  max: new Date().toLocaleDateString("sv-SE"),
+                  onClick: (e: React.MouseEvent<HTMLInputElement>) =>
+                    e.currentTarget.showPicker(),
+                },
+                inputLabel: { shrink: true },
+              }}
               fullWidth
             />
             <TextField
               sx={{ marginTop: 1 }}
               label="Sick Leave End Date"
+              type="date"
               value={sickLeaveEndDate}
               onChange={({ target }) => setSickLeaveEndDate(target.value)}
               fullWidth
+              slotProps={{
+                htmlInput: {
+                  max: new Date().toLocaleDateString("sv-SE"),
+                  onClick: (e: React.MouseEvent<HTMLInputElement>) =>
+                    e.currentTarget.showPicker(),
+                },
+                inputLabel: { shrink: true },
+              }}
             />
           </>
         )}
