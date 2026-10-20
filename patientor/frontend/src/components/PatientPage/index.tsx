@@ -12,6 +12,7 @@ import {
   Divider,
 } from "@mui/material";
 import EntryDetails from "./EntryDetails";
+import NewEntryForm from "./NewEntryForm";
 
 const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -56,10 +57,22 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
             )}
           </TableBody>
         </Table>
+        <NewEntryForm
+          patientId={patient.id}
+          handleCreatedEntry={(entry) => {
+            setPatient(
+              (prev) =>
+                prev && {
+                  ...patient,
+                  entries: [...(patient.entries ?? []), entry],
+                },
+            );
+          }}
+        />
         {patient.entries && (
           <>
             <Typography component="h3" variant="h6" sx={{ p: "1em 0" }}>
-              entries
+              Entries
             </Typography>
             {patient.entries?.map((entry) => (
               <div key={entry.id} style={{ marginBottom: "2em" }}>

@@ -5,7 +5,6 @@ export interface Diagnosis {
 }
 
 interface BaseEntry {
-  id: string;
   date: string;
   specialist: string;
   description: string;
@@ -29,7 +28,7 @@ const HealthCheckRating = {
   CriticalRisk: 3,
 } as const;
 
-type HealthCheckRating =
+export type HealthCheckRating =
   (typeof HealthCheckRating)[keyof typeof HealthCheckRating];
 
 export interface HospitalEntry extends BaseEntry {
@@ -48,10 +47,12 @@ export interface HealthCheckEntry extends BaseEntry {
   healthCheckRating: HealthCheckRating;
 }
 
-export type Entry =
+export type NewEntry =
   | HospitalEntry
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
+
+export type Entry = NewEntry & { id: string };
 
 export enum Gender {
   Male = "male",

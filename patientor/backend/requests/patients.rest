@@ -20,17 +20,15 @@ POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/ent
 Content-Type: application/json
 
 {
-    "date": "2026-10-17",
-    "type": "OccupationalHealthcare",
+    "date": "2026-10-19",
+    "type": "Hospital",
     "specialist": "MD House",
-    "employerName": "HyPD",
-    "diagnosisCodes": ["Z57.1", "Z74.3", "M51.2", "whatever"],
+    "diagnosisCodes": ["S62.5"],
     "description":
-          "11:02",
-        "sickLeave": {
-          "startDate": "2019-08-05",
-          "endDate": "2019-08-28"
-        },
-    "id": "attacker generated id"
+        "Healing time appr. 2 weeks. patient doesn't remember how he got the injury.",
+    "discharge": {
+        "date": "2029-10-19",
+        "criteria": "Thumb has healed."
+    }
 }
 
