@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { Button, Divider, Container, Typography } from "@mui/material";
 
 import { apiBaseUrl } from "./constants";
-import type { Patient, Diagnosis } from "./types";
+import type { Diagnosis, PatientSummary } from "./types";
 
 import patientService from "./services/patients";
 import diagnosisService from "./services/diagnoses";
@@ -12,7 +12,7 @@ import PatientListPage from "./components/PatientListPage";
 import PatientPage from "./components/PatientPage";
 
 const App = () => {
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patients, setPatients] = useState<PatientSummary[]>([]);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="App">
+    <>
       <Router>
         <Container>
           <Typography variant="h3" sx={{ marginBottom: "0.5em" }}>
@@ -64,7 +64,7 @@ const App = () => {
           </Routes>
         </Container>
       </Router>
-    </div>
+    </>
   );
 };
 

@@ -9,10 +9,11 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Divider,
+  Box,
 } from "@mui/material";
-import EntryDetails from "./EntryDetails";
+
 import NewEntryForm from "./NewEntryForm";
+import EntryCard from "./EntryCard";
 
 const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -37,6 +38,7 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
         <Typography component="h2" variant="h4" sx={{ p: "1em 0" }}>
           {patient.name} <GenderIcon gender={patient.gender} />
         </Typography>
+
         <Table sx={{ width: "auto" }}>
           <TableBody>
             {patient.ssn && (
@@ -57,47 +59,35 @@ const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
             )}
           </TableBody>
         </Table>
-        <NewEntryForm
-          patientId={patient.id}
-          handleCreatedEntry={(entry) => {
-            setPatient(
-              (prev) =>
-                prev && {
-                  ...patient,
-                  entries: [...(patient.entries ?? []), entry],
-                },
-            );
-          }}
-          diagnoses={diagnoses}
-        />
+
+        <Box>
+          <Typography component="h3" variant="h6" sx={{ p: "1em 0" }}>
+            New Entry
+          </Typography>
+          <NewEntryForm
+            patientId={patient.id}
+            handleCreatedEntry={(entry) => {
+              setPatient(
+                (prev) =>
+                  prev && {
+                    ...prev,
+                    entries: [...(prev.entries ?? []), entry],
+                  },
+              );
+            }}
+            diagnoses={diagnoses}
+          />
+        </Box>
+
         {patient.entries && (
-          <>
+          <Box>
             <Typography component="h3" variant="h6" sx={{ p: "1em 0" }}>
               Entries
             </Typography>
-            {patient.entries?.map((entry) => (
-              <div key={entry.id} style={{ marginBottom: "2em" }}>
-                <p>
-                  {entry.date} {entry.description}
-                </p>
-                {entry.diagnosisCodes && (
-                  <ul>
-                    {entry.diagnosisCodes?.map((code) => {
-                      const diagnosis = diagnoses.find((d) => d.code === code);
-                      return (
-                        <li key={code}>
-                          {code} {diagnosis?.name}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-                <EntryDetails entry={entry} />
-                <p>Diagnose by {entry.specialist}</p>
-                <Divider />
-              </div>
+            {patient.entries.map((entry) => (
+              <EntryCard key={entry.id} entry={entry} diagnoses={diagnoses} />
             ))}
-          </>
+          </Box>
         )}
       </>
     )

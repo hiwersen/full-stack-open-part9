@@ -1,6 +1,7 @@
 import diagnosesData from "../../data/diagnosesData.ts";
+import type { Diagnosis } from "../types.ts";
 
-const getAll = () => diagnosesData;
+const getAll = (): Diagnosis[] => diagnosesData;
 
 const add = () => "diagnosis added";
 

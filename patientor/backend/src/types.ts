@@ -13,6 +13,11 @@ export const DischargeSchema = z.object({
   criteria: z.string(),
 });
 
+export const SickLeaveSchema = z.object({
+  startDate: z.iso.date(),
+  endDate: z.iso.date(),
+});
+
 export const HealthCheckRating = {
   Healthy: 0,
   LowRisk: 1,
@@ -20,16 +25,11 @@ export const HealthCheckRating = {
   CriticalRisk: 3,
 } as const;
 
-export const SickLeaveSchema = z.object({
-  startDate: z.iso.date(),
-  endDate: z.iso.date(),
-});
-
 export const BaseEntrySchema = z.object({
   date: z.iso.date(),
   specialist: z.string(),
   description: z.string(),
-  diagnosisCodes: z.array(z.string()).optional(),
+  diagnosisCodes: z.array(DiagnosisSchema.shape.code).optional(),
 });
 
 export const HospitalEntrySchema = BaseEntrySchema.extend({
@@ -81,6 +81,4 @@ export interface Patient extends NewPatient {
   entries: Entry[];
 }
 
-export type PatientNoSsn = Omit<Patient, "ssn" | "entries">;
-
-export type ErrorBody = { error: string };
+export type PatientSummary = Omit<Patient, "ssn" | "entries">;

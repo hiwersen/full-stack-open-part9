@@ -1,5 +1,4 @@
 import {
-  Typography,
   Button,
   TextField,
   Grid,
@@ -8,18 +7,16 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Box,
 } from "@mui/material";
-import patientService from "../../services/patients";
-import {
-  NewEntry,
-  Entry,
-  HealthCheckRating,
-  BaseEntry,
-  Diagnosis,
-} from "../../types";
+import patientService from "../../../services/patients";
+import type { NewEntry, Entry, BaseEntry, Diagnosis } from "../../../types";
+import { HealthCheckRating } from "../../../types";
 import React, { useState } from "react";
-import axios from "axios";
-
+import { getAxiosErrorMessage } from "../../../utils";
+import HospitalForm from "./HospitalForm";
+import HealthCheckForm from "./HealthCheckForm";
+import OccupationalHealthcareForm from "./OccupationalHealthcareForm";
 interface Props {
   patientId: string;
   handleCreatedEntry: (entry: Entry) => void;
@@ -32,7 +29,9 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
   const [specialist, setSpecialist] = useState("");
   const [description, setDescription] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
-  const [healthCheckRating, setHealthCheckRating] = useState(0);
+  const [healthCheckRating, setHealthCheckRating] = useState<HealthCheckRating>(
+    HealthCheckRating.Healthy,
+  );
   const [dischargeDate, setDischargeDate] = useState("");
   const [dischargeCriteria, setDischargeCriteria] = useState("");
   const [employerName, setEmployerName] = useState("");
@@ -46,7 +45,7 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
     setSpecialist("");
     setDescription("");
     setDiagnosisCodes([]);
-    setHealthCheckRating(0);
+    setHealthCheckRating(HealthCheckRating.Healthy);
     setDischargeDate("");
     setDischargeCriteria("");
     setEmployerName("");
@@ -71,7 +70,7 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
           return {
             ...baseEntry,
             type: "HealthCheck",
-            healthCheckRating: Number(healthCheckRating) as HealthCheckRating,
+            healthCheckRating,
           };
         case "Hospital":
           return {
@@ -105,19 +104,7 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
         handleCreatedEntry(entry);
         reset();
       } catch (error: unknown) {
-        console.dir(error);
-        if (axios.isAxiosError(error)) {
-          if (error?.response?.data) {
-            const message = error.response.data.error[0].message;
-            const path = error.response.data.error[0].path[0];
-            setErrorMessage(`${message}${path && " at " + path + " field"}`);
-          } else {
-            setErrorMessage("Unrecognized axios error");
-          }
-        } else {
-          console.error("Unknown error", error);
-          setErrorMessage("Unknown error");
-        }
+        setErrorMessage(getAxiosErrorMessage(error));
       }
     };
 
@@ -125,10 +112,7 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
   };
 
   return (
-    <div>
-      <Typography component="h3" variant="h6" sx={{ p: "1em 0" }}>
-        New Entry
-      </Typography>
+    <Box>
       {errorMessage && (
         <Alert severity="error" sx={{ marginBottom: 1 }}>
           {errorMessage}
@@ -143,18 +127,11 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
             value={type}
             onChange={({ target }) => setType(target.value)}
           >
-            <MenuItem key="Hospital" value="Hospital">
-              Hospital
-            </MenuItem>
-            <MenuItem
-              key="OccupationalHealthcare"
-              value="OccupationalHealthcare"
-            >
+            <MenuItem value="Hospital">Hospital</MenuItem>
+            <MenuItem value="OccupationalHealthcare">
               Occupational Healthcare
             </MenuItem>
-            <MenuItem key="HealthCheck" value="HealthCheck">
-              Health Check
-            </MenuItem>
+            <MenuItem value="HealthCheck">Health Check</MenuItem>
           </Select>
         </FormControl>
 
@@ -215,98 +192,30 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
         </FormControl>
 
         {type === "HealthCheck" && (
-          <FormControl fullWidth sx={{ marginTop: 1 }}>
-            <InputLabel id="rating-label">Health Check Rating</InputLabel>
-            <Select
-              labelId="rating-label"
-              label="Health Check Rating"
-              required
-              value={healthCheckRating}
-              onChange={({ target }) => setHealthCheckRating(target.value)}
-              fullWidth
-            >
-              {Object.entries(HealthCheckRating).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {value} — {key}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <HealthCheckForm
+            healthCheckRating={healthCheckRating}
+            setHealthCheckRating={setHealthCheckRating}
+          />
         )}
 
         {type === "Hospital" && (
-          <>
-            <TextField
-              sx={{ marginTop: 1 }}
-              label="Discharge Date"
-              type="date"
-              required
-              value={dischargeDate}
-              onChange={({ target }) => setDischargeDate(target.value)}
-              slotProps={{
-                htmlInput: {
-                  max: new Date().toLocaleDateString("sv-SE"),
-                  onClick: (e: React.MouseEvent<HTMLInputElement>) =>
-                    e.currentTarget.showPicker(),
-                },
-                inputLabel: { shrink: true },
-              }}
-              fullWidth
-            />
-            <TextField
-              sx={{ marginTop: 1 }}
-              label="Discharge Criteria"
-              required
-              value={dischargeCriteria}
-              onChange={({ target }) => setDischargeCriteria(target.value)}
-              fullWidth
-            />
-          </>
+          <HospitalForm
+            dischargeDate={dischargeDate}
+            dischargeCriteria={dischargeCriteria}
+            setDischargeDate={setDischargeDate}
+            setDischargeCriteria={setDischargeCriteria}
+          />
         )}
 
         {type === "OccupationalHealthcare" && (
-          <>
-            <TextField
-              sx={{ marginTop: 1 }}
-              label="Employer Name"
-              required
-              value={employerName}
-              onChange={({ target }) => setEmployerName(target.value)}
-              fullWidth
-            />
-            <TextField
-              sx={{ marginTop: 1 }}
-              label="Sick Leave Start Date"
-              type="date"
-              value={sickLeaveStartDate}
-              onChange={({ target }) => setSickLeaveStartDate(target.value)}
-              slotProps={{
-                htmlInput: {
-                  max: new Date().toLocaleDateString("sv-SE"),
-                  onClick: (e: React.MouseEvent<HTMLInputElement>) =>
-                    e.currentTarget.showPicker(),
-                },
-                inputLabel: { shrink: true },
-              }}
-              fullWidth
-            />
-            <TextField
-              sx={{ marginTop: 1 }}
-              label="Sick Leave End Date"
-              type="date"
-              value={sickLeaveEndDate}
-              onChange={({ target }) => setSickLeaveEndDate(target.value)}
-              fullWidth
-              slotProps={{
-                htmlInput: {
-                  max: new Date().toLocaleDateString("sv-SE"),
-                  onClick: (e: React.MouseEvent<HTMLInputElement>) =>
-                    e.currentTarget.showPicker(),
-                },
-                inputLabel: { shrink: true },
-              }}
-            />
-          </>
+          <OccupationalHealthcareForm
+            employerName={employerName}
+            sickLeaveStartDate={sickLeaveStartDate}
+            sickLeaveEndDate={sickLeaveEndDate}
+            setEmployerName={setEmployerName}
+            setSickLeaveStartDate={setSickLeaveStartDate}
+            setSickLeaveEndDate={setSickLeaveEndDate}
+          />
         )}
 
         <Grid
@@ -316,7 +225,7 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
         >
           <Grid size="auto">
             <Button type="submit" variant="contained">
-              Add
+              Add New Entry
             </Button>
           </Grid>
           <Grid size="auto">
@@ -331,7 +240,7 @@ const NewEntryForm = ({ patientId, handleCreatedEntry, diagnoses }: Props) => {
           </Grid>
         </Grid>
       </form>
-    </div>
+    </Box>
   );
 };
 

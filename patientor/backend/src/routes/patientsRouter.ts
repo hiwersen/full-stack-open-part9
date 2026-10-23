@@ -8,14 +8,15 @@ import patientsService from "../services/patientsService.ts";
 import {
   type Patient,
   type NewPatient,
-  type PatientNoSsn,
+  type PatientSummary,
   NewPatientSchema,
   NewEntrySchema,
   type NewEntry,
   type Entry,
-  type ErrorBody,
 } from "../types.ts";
 import { z } from "zod";
+
+type ErrorBody = { error: string };
 
 const patientsRouter = express.Router();
 
@@ -50,8 +51,8 @@ const errorMiddleware: ErrorRequestHandler = (
   }
 };
 
-patientsRouter.get("/", (_req, res: Response<PatientNoSsn[]>) => {
-  res.json(patientsService.getAllNoSsn());
+patientsRouter.get("/", (_req, res: Response<PatientSummary[]>) => {
+  res.json(patientsService.getAll());
 });
 
 patientsRouter.get("/:id", (req, res: Response<Patient | ErrorBody>) => {
@@ -59,7 +60,7 @@ patientsRouter.get("/:id", (req, res: Response<Patient | ErrorBody>) => {
 
   if (!patient) {
     res.status(404).json({ error: "patient not found" });
-    return;
+    return undefined;
   }
 
   res.json(patient);
@@ -85,7 +86,7 @@ patientsRouter.post(
 
     if (!addedEntry) {
       res.status(404).json({ error: "patient not found" });
-      return;
+      return undefined;
     }
 
     res.json(addedEntry);

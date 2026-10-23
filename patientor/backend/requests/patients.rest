@@ -9,7 +9,7 @@ Content-Type: application/json
 
 {
     "name": "name",
-    "dateOfBirth": "2026-01-01",
+    "dateOfBirth": "2026-10-22",
     "ssn": "999999-999X",
     "gender": "male",
     "occupation": "my occupation"
@@ -20,14 +20,14 @@ POST http://localhost:3001/api/patients/d2773336-f723-11e9-8f0b-362b9e155667/ent
 Content-Type: application/json
 
 {
-    "date": "2026-10-19",
+    "date": "2026-10-22",
     "type": "Hospital",
     "specialist": "MD House",
     "diagnosisCodes": ["S62.5"],
     "description":
-        "Healing time appr. 2 weeks. patient doesn't remember how he got the injury.",
+        "TS overdose at 14:46",
     "discharge": {
-        "date": "2029-10-19",
+        "date": "2029-10-22",
         "criteria": "Thumb has healed."
     }
 }

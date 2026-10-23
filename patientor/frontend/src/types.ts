@@ -4,13 +4,6 @@ export interface Diagnosis {
   latin?: string;
 }
 
-export interface BaseEntry {
-  date: string;
-  specialist: string;
-  description: string;
-  diagnosisCodes?: Array<Diagnosis["code"]>;
-}
-
 export interface Discharge {
   date: string;
   criteria: string;
@@ -31,20 +24,27 @@ export const HealthCheckRating = {
 export type HealthCheckRating =
   (typeof HealthCheckRating)[keyof typeof HealthCheckRating];
 
+export interface BaseEntry {
+  date: string;
+  specialist: string;
+  description: string;
+  diagnosisCodes?: Array<Diagnosis["code"]>;
+}
+
 export interface HospitalEntry extends BaseEntry {
   type: "Hospital";
   discharge: Discharge;
+}
+
+export interface HealthCheckEntry extends BaseEntry {
+  type: "HealthCheck";
+  healthCheckRating: HealthCheckRating;
 }
 
 export interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
   sickLeave?: SickLeave;
-}
-
-export interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
-  healthCheckRating: HealthCheckRating;
 }
 
 export type NewEntry =
@@ -54,20 +54,25 @@ export type NewEntry =
 
 export type Entry = NewEntry & { id: string };
 
-export enum Gender {
-  Male = "male",
-  Female = "female",
-  Other = "other",
-}
+export const Gender = {
+  Male: "male",
+  Female: "female",
+  Other: "other",
+} as const;
 
-export interface Patient {
-  id: string;
+export type Gender = (typeof Gender)[keyof typeof Gender];
+
+export interface NewPatient {
   name: string;
   occupation: string;
   gender: Gender;
-  ssn?: string;
-  dateOfBirth?: string;
+  ssn: string;
+  dateOfBirth: string;
+}
+
+export interface Patient extends NewPatient {
+  id: string;
   entries?: Entry[];
 }
 
-export type PatientFormValues = Omit<Patient, "id" | "entries">;
+export type PatientSummary = Omit<Patient, "ssn" | "entries">;

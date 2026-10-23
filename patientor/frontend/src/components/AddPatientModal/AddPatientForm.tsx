@@ -1,4 +1,5 @@
-import { useState, SyntheticEvent } from "react";
+import type { SubmitEventHandler } from "react";
+import { useState } from "react";
 
 import {
   TextField,
@@ -7,14 +8,15 @@ import {
   Select,
   Grid,
   Button,
-  SelectChangeEvent,
+  FormControl,
 } from "@mui/material";
 
-import { PatientFormValues, Gender } from "../../types";
+import type { NewPatient } from "../../types";
+import { Gender } from "../../types";
 
 interface Props {
   onCancel: () => void;
-  onSubmit: (values: PatientFormValues) => void;
+  onSubmit: (newPatient: NewPatient) => Promise<void>;
 }
 
 interface GenderOption {
@@ -22,34 +24,23 @@ interface GenderOption {
   label: string;
 }
 
-const genderOptions: GenderOption[] = Object.values(Gender).map((v) => ({
-  value: v,
-  label: v.toString(),
-}));
+const genderOptions: GenderOption[] = Object.entries(Gender).map(
+  ([label, value]) => ({
+    label,
+    value,
+  }),
+);
 
 const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
   const [name, setName] = useState("");
   const [occupation, setOccupation] = useState("");
   const [ssn, setSsn] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [gender, setGender] = useState(Gender.Other);
+  const [gender, setGender] = useState<Gender>(Gender.Other);
 
-  const onGenderChange = (event: SelectChangeEvent<string>) => {
+  const addPatient: SubmitEventHandler = (event) => {
     event.preventDefault();
-    if (typeof event.target.value === "string") {
-      const value = event.target.value;
-      const newGender = Object.values(Gender).find(
-        (g) => g.toString() === value,
-      );
-      if (newGender) {
-        setGender(newGender);
-      }
-    }
-  };
-
-  const addPatient = (event: SyntheticEvent) => {
-    event.preventDefault();
-    onSubmit({
+    void onSubmit({
       name,
       occupation,
       ssn,
@@ -59,67 +50,83 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
   };
 
   return (
-    <div>
-      <form onSubmit={addPatient}>
-        <TextField
-          label="Name"
-          fullWidth
-          value={name}
-          onChange={({ target }) => setName(target.value)}
-        />
-        <TextField
-          label="Social security number"
-          fullWidth
-          value={ssn}
-          onChange={({ target }) => setSsn(target.value)}
-        />
-        <TextField
-          label="Date of birth"
-          placeholder="YYYY-MM-DD"
-          fullWidth
-          value={dateOfBirth}
-          onChange={({ target }) => setDateOfBirth(target.value)}
-        />
-        <TextField
-          label="Occupation"
-          fullWidth
-          value={occupation}
-          onChange={({ target }) => setOccupation(target.value)}
-        />
+    <form onSubmit={addPatient}>
+      <TextField
+        sx={{ marginTop: 1 }}
+        fullWidth
+        label="Name"
+        required
+        value={name}
+        onChange={({ target }) => setName(target.value)}
+      />
+      <TextField
+        sx={{ marginTop: 1 }}
+        fullWidth
+        label="Social security number"
+        required
+        value={ssn}
+        onChange={({ target }) => setSsn(target.value)}
+      />
+      <TextField
+        sx={{ marginTop: 1 }}
+        fullWidth
+        label="Date of birth"
+        required
+        type="date"
+        value={dateOfBirth}
+        onChange={({ target }) => setDateOfBirth(target.value)}
+        slotProps={{
+          htmlInput: {
+            max: new Date().toLocaleDateString("sv-SE"),
+            onClick: (e: React.MouseEvent<HTMLInputElement>) =>
+              e.currentTarget.showPicker(),
+          },
+          inputLabel: { shrink: true },
+        }}
+      />
+      <TextField
+        sx={{ marginTop: 1 }}
+        fullWidth
+        label="Occupation"
+        required
+        value={occupation}
+        onChange={({ target }) => setOccupation(target.value)}
+      />
 
-        <InputLabel sx={{ marginTop: 2.5 }}>Gender</InputLabel>
+      <FormControl fullWidth required sx={{ marginTop: 1 }}>
+        <InputLabel id="gender-label-id">Gender</InputLabel>
         <Select
+          labelId="gender-label-id"
           label="Gender"
-          fullWidth
           value={gender}
-          onChange={onGenderChange}
+          onChange={({ target }) => setGender(target.value)}
         >
-          {genderOptions.map((option) => (
-            <MenuItem key={option.label} value={option.value}>
-              {option.label}
+          {genderOptions.map(({ label, value }) => (
+            <MenuItem key={value} value={value}>
+              {label}
             </MenuItem>
           ))}
         </Select>
+      </FormControl>
 
-        <Grid container justifyContent="space-between" sx={{ marginTop: 2 }}>
-          <Grid size="auto">
-            <Button
-              color="secondary"
-              variant="contained"
-              type="button"
-              onClick={onCancel}
-            >
-              Cancel
-            </Button>
-          </Grid>
-          <Grid size="auto">
-            <Button type="submit" variant="contained">
-              Add
-            </Button>
-          </Grid>
+      <Grid container justifyContent="space-between" sx={{ marginTop: 1 }}>
+        <Grid size="auto">
+          <Button
+            color="secondary"
+            variant="contained"
+            type="button"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
         </Grid>
-      </form>
-    </div>
+        <Grid size="auto">
+          <Button type="submit" variant="contained">
+            Add
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
   );
 };
 

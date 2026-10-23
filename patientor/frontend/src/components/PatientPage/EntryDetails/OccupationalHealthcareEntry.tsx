@@ -1,3 +1,4 @@
+import { Box, Chip, Stack, Typography } from "@mui/material";
 import type { OccupationalHealthcareEntry } from "../../../types";
 import WorkIcon from "@mui/icons-material/Work";
 
@@ -7,18 +8,24 @@ const OccupationalHealthcareEntry = ({
   entry: OccupationalHealthcareEntry;
 }) => {
   return (
-    <div>
-      <p>
+    <Box>
+      <Typography>
         <WorkIcon sx={{ verticalAlign: "bottom" }} /> employer{" "}
         {entry.employerName}
-      </p>
+      </Typography>
       {entry.sickLeave && (
-        <p>
-          sick leave start {entry.sickLeave.startDate} end{" "}
-          {entry.sickLeave.endDate}
-        </p>
+        <>
+          <Typography>sick leave</Typography>
+          <Stack direction="row" spacing={2}>
+            <Chip
+              variant="outlined"
+              label={`start ${entry.sickLeave.startDate}`}
+            />
+            <Chip variant="outlined" label={`end ${entry.sickLeave.endDate}`} />
+          </Stack>
+        </>
       )}
-    </div>
+    </Box>
   );
 };
 

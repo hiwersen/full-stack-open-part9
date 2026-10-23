@@ -20,6 +20,7 @@ export default defineConfig({
   },
   rules: {
     "@stylistic/semi": "error",
+    "@typescript-eslint/no-shadow": "error",
     "@typescript-eslint/no-unsafe-assignment": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -31,5 +32,6 @@ export default defineConfig({
       "error",
       { argsIgnorePattern: "^_", ignoreRestSiblings: true },
     ],
+    "no-case-declarations": "off",
   },
 });

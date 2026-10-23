@@ -1,14 +1,14 @@
 import patientsData from "../../data/patientsData.ts";
 import type {
   Patient,
-  PatientNoSsn,
+  PatientSummary,
   NewPatient,
   NewEntry,
   Entry,
 } from "../types.ts";
 import { v1 as uuid } from "uuid";
 
-const getAllNoSsn = (): PatientNoSsn[] => {
+const getAll = (): PatientSummary[] => {
   return patientsData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
@@ -33,13 +33,13 @@ const add = (newPatient: NewPatient): Patient => {
   return patient;
 };
 
-const addEntry = (id: string, newEntry: NewEntry): Entry | undefined => {
-  const patient = get(id);
-  if (!patient) return;
+const addEntry = (patientId: string, newEntry: NewEntry): Entry | undefined => {
+  const patient = get(patientId);
+  if (!patient) return undefined;
 
   const entry: Entry = { ...newEntry, id: uuid() };
   patient.entries.push(entry);
   return entry;
 };
 
-export default { getAllNoSsn, get, add, addEntry };
+export default { getAll, get, add, addEntry };
